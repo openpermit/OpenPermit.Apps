@@ -161,10 +161,11 @@
     OpenPermit.Tasks = {};
 
     OpenPermit.Tasks.Query = Esri.Tasks.Query.extend({
+        
         path: 'op/permits',
 
         params: {
-            
+            fields: 'geo'
         },
 
         intersects: function (geometry) {
@@ -173,8 +174,19 @@
         },
 
         between: function (start, end) {
-            this.params.time = [start.valueOf(), end.valueOf()];
+            this.params.from = start.toISOString();
+            if (end) {
+                this.params.to = end.toISOString();
+            }
             return this;
+        },
+
+        whereStatusIn: function (statusList) {
+            this.params.status = statusList;
+        },
+
+        whereTypesIn: function (typesList) {
+            this.params.types = typesList;
         },
 
         _setGeometry: function (geometry) {
@@ -249,6 +261,7 @@
     OpenPermit.Layers = {};
     
     OpenPermit.Layers.ClusteredOpenPermitLayer = Esri.Layers.ClusteredFeatureLayer.extend({
+
         initialize: function (options) {
             Esri.Layers.ClusteredFeatureLayer.prototype.initialize.call(this, options);
 
@@ -261,16 +274,27 @@
                 this.fire(e.type, e);
             }, this);
         },
+        onRemove: function (map) {
+            Esri.Layers.ClusteredFeatureLayer.prototype.onRemove.call(this, map);
+            this.cluster.clearLayers();
+        },
         _buildQuery: function (bounds) {
             var query = this._service.query()
                             .intersects(bounds);
             
-            if (this.options.from && this.options.to) {
+            if (this.options.from) {
                 query.between(this.options.from, this.options.to);
             }
 
+            if (this.options.statusList) {
+                query.whereStatusIn(this.options.statusList);
+            }
+
+            if (this.options.typesList) {
+                query.whereTypesIn(this.options.typesList);
+            }
             return query;
-        }
+        },
     });
 
     OpenPermit.Layers.clusteredOpenPermitLayer = function (options) {

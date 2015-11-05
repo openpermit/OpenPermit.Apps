@@ -66,3 +66,39 @@ body {
 {
     text-decoration: none;
 }
+
+
+.tools {
+    margin-top: 10px;
+}
+
+.tools .dropdown-menu {
+    position: relative;
+}
+
+.filters {
+    background-color: #fff;  
+    border: 1px solid #F5F5F5;
+    border-radius: 4px;
+    margin-top: 2px;
+}
+
+.filters-head {
+    padding: 5px;
+    background-color: #F5F5F5;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.filters-body {
+    padding: 20px;
+    
+}
+
+#slide-submenu{
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1000;
+}
